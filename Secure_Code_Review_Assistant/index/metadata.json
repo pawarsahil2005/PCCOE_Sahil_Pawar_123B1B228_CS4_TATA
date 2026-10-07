@@ -1,0 +1,354 @@
+[
+  {
+    "id": "SEC-001",
+    "title": "Array Bounds",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-001 Array Bounds. Accessing arrays or buffers without checking the index or length can read or write outside allocated storage. Out-of-bounds access can cause crashes, data corruption, or memory-safety issues in C/C++ and unexpected exceptions in managed languages. buf[index] used without confirming 0 <= index < length Validate indexes against the actual allocated or logical length before access. Prefer safer APIs and bounded copies. High when bounds are missing on attacker-influenced indexes; Medium when bounds are unclear. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-001",
+      "title": "Array Bounds",
+      "description": "Accessing arrays or buffers without checking the index or length can read or write outside allocated storage.",
+      "why it matters": "Out-of-bounds access can cause crashes, data corruption, or memory-safety issues in C/C++ and unexpected exceptions in managed languages.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "buf[index] used without confirming 0 <= index < length",
+      "recommended practice": "Validate indexes against the actual allocated or logical length before access. Prefer safer APIs and bounded copies.",
+      "severity guidance": "High when bounds are missing on attacker-influenced indexes; Medium when bounds are unclear."
+    }
+  },
+  {
+    "id": "SEC-002",
+    "title": "Pointer / Null Validation",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-002 Pointer / Null Validation. Pointers, references, and nullable objects should be validated before dereference or method calls. Null or invalid pointer use can crash embedded software, cause undefined behavior, or throw NullPointerException / TypeError. ptr->field without checking ptr != NULL; obj.method() without null checks Check pointers/objects before use. Initialize pointers. Document ownership. In Java/Python, handle None/null explicitly. High for unchecked dereference of possibly null pointers; Medium for nullable objects with unclear lifetime. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-002",
+      "title": "Pointer / Null Validation",
+      "description": "Pointers, references, and nullable objects should be validated before dereference or method calls.",
+      "why it matters": "Null or invalid pointer use can crash embedded software, cause undefined behavior, or throw NullPointerException / TypeError.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "ptr->field without checking ptr != NULL; obj.method() without null checks",
+      "recommended practice": "Check pointers/objects before use. Initialize pointers. Document ownership. In Java/Python, handle None/null explicitly.",
+      "severity guidance": "High for unchecked dereference of possibly null pointers; Medium for nullable objects with unclear lifetime."
+    }
+  },
+  {
+    "id": "SEC-003",
+    "title": "Variable Initialization",
+    "languages": "C, C++, Java",
+    "text": "SEC-003 Variable Initialization. Variables, buffers, and pointers should be initialized before they are read. Uninitialized memory can leak leftover data, produce non-deterministic behavior, or fail safety-related checks. int x; used in a condition before assignment Initialize at declaration. Zero buffers. Avoid reading locals before assignment. Educational MISRA-oriented guidance recommends definite assignment before use. High in C/C++ safety-critical paths; Medium otherwise. C, C++, Java",
+    "fields": {
+      "id": "SEC-003",
+      "title": "Variable Initialization",
+      "description": "Variables, buffers, and pointers should be initialized before they are read.",
+      "why it matters": "Uninitialized memory can leak leftover data, produce non-deterministic behavior, or fail safety-related checks.",
+      "languages": "C, C++, Java",
+      "example": "int x; used in a condition before assignment",
+      "recommended practice": "Initialize at declaration. Zero buffers. Avoid reading locals before assignment. Educational MISRA-oriented guidance recommends definite assignment before use.",
+      "severity guidance": "High in C/C++ safety-critical paths; Medium otherwise."
+    }
+  },
+  {
+    "id": "SEC-004",
+    "title": "Integer Overflow and Range",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-004 Integer Overflow and Range. Arithmetic on integers can wrap, overflow, or produce invalid indexes and sizes. Overflow can bypass size checks, allocate too little memory, or produce incorrect control decisions in ECU software. len + offset used as an allocation size without overflow checks Check ranges before arithmetic. Use wider types or saturating/checked operations where available. Validate against documented min/max. High when overflow can affect buffers or safety decisions; Medium for general arithmetic. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-004",
+      "title": "Integer Overflow and Range",
+      "description": "Arithmetic on integers can wrap, overflow, or produce invalid indexes and sizes.",
+      "why it matters": "Overflow can bypass size checks, allocate too little memory, or produce incorrect control decisions in ECU software.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "len + offset used as an allocation size without overflow checks",
+      "recommended practice": "Check ranges before arithmetic. Use wider types or saturating/checked operations where available. Validate against documented min/max.",
+      "severity guidance": "High when overflow can affect buffers or safety decisions; Medium for general arithmetic."
+    }
+  },
+  {
+    "id": "SEC-005",
+    "title": "Unsafe Buffer Operations",
+    "languages": "C, C++",
+    "text": "SEC-005 Unsafe Buffer Operations. Unbounded string and memory copy functions can overflow destination buffers. Classic buffer overflows remain a common reliability and security issue in C/C++. strcpy, strcat, sprintf, gets, scanf(\"%s\") Use bounded APIs (strncpy/strlcpy/snprintf/memcpy_s where approved). Always pass destination size. Avoid gets(). High for unbounded copies of untrusted or unbounded input. C, C++",
+    "fields": {
+      "id": "SEC-005",
+      "title": "Unsafe Buffer Operations",
+      "description": "Unbounded string and memory copy functions can overflow destination buffers.",
+      "why it matters": "Classic buffer overflows remain a common reliability and security issue in C/C++.",
+      "languages": "C, C++",
+      "example": "strcpy, strcat, sprintf, gets, scanf(\"%s\")",
+      "recommended practice": "Use bounded APIs (strncpy/strlcpy/snprintf/memcpy_s where approved). Always pass destination size. Avoid gets().",
+      "severity guidance": "High for unbounded copies of untrusted or unbounded input."
+    }
+  },
+  {
+    "id": "SEC-006",
+    "title": "Resource Management",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-006 Resource Management. Files, sockets, memory, mutexes, and other resources must be acquired and released on all paths. Leaks can exhaust ECU resources. Double-free and use-after-free cause undefined behavior. malloc without matching free; open() without close; new without delete Pair acquire/release. Use RAII, try-with-resources, or context managers. Check allocation results. Medium to High depending on resource criticality and error paths. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-006",
+      "title": "Resource Management",
+      "description": "Files, sockets, memory, mutexes, and other resources must be acquired and released on all paths.",
+      "why it matters": "Leaks can exhaust ECU resources. Double-free and use-after-free cause undefined behavior.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "malloc without matching free; open() without close; new without delete",
+      "recommended practice": "Pair acquire/release. Use RAII, try-with-resources, or context managers. Check allocation results.",
+      "severity guidance": "Medium to High depending on resource criticality and error paths."
+    }
+  },
+  {
+    "id": "SEC-007",
+    "title": "Input Validation",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-007 Input Validation. External input (network, sensors, user data, files, APIs) must be validated for type, length, range, and encoding. Unvalidated input can drive injection, overflow, logic errors, and unsafe control flow. Using request data directly as a filename, SQL fragment, command, or array index Validate at trust boundaries. Use allow-lists. Reject unexpected values. Do not rely only on client-side checks. High when input influences commands, queries, paths, or memory sizes. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-007",
+      "title": "Input Validation",
+      "description": "External input (network, sensors, user data, files, APIs) must be validated for type, length, range, and encoding.",
+      "why it matters": "Unvalidated input can drive injection, overflow, logic errors, and unsafe control flow.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "Using request data directly as a filename, SQL fragment, command, or array index",
+      "recommended practice": "Validate at trust boundaries. Use allow-lists. Reject unexpected values. Do not rely only on client-side checks.",
+      "severity guidance": "High when input influences commands, queries, paths, or memory sizes."
+    }
+  },
+  {
+    "id": "SEC-008",
+    "title": "Global State",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-008 Global State. Excessive mutable global or static state makes behavior harder to reason about and review. Hidden coupling can cause race conditions, unexpected side effects, and reuse defects across modules. Many non-const globals modified from multiple functions Limit globals. Prefer explicit parameters and encapsulated modules. Protect shared state if concurrency exists. Low to Medium; raise severity if globals store secrets or safety-critical values. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-008",
+      "title": "Global State",
+      "description": "Excessive mutable global or static state makes behavior harder to reason about and review.",
+      "why it matters": "Hidden coupling can cause race conditions, unexpected side effects, and reuse defects across modules.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "Many non-const globals modified from multiple functions",
+      "recommended practice": "Limit globals. Prefer explicit parameters and encapsulated modules. Protect shared state if concurrency exists.",
+      "severity guidance": "Low to Medium; raise severity if globals store secrets or safety-critical values."
+    }
+  },
+  {
+    "id": "SEC-009",
+    "title": "Control Flow",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-009 Control Flow. Complex, unreachable, or dangerous control flow (goto, empty catch, always-true conditions) hides defects. Reviewers may miss missing error paths. Educational MISRA-oriented guidance discourages unstructured jumps. goto error; empty catch {}; if (true) { ... } Prefer structured control flow. Handle errors explicitly. Avoid dead branches and swallowed exceptions. Medium for swallowed errors; Low for style-only complexity unless safety-related. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-009",
+      "title": "Control Flow",
+      "description": "Complex, unreachable, or dangerous control flow (goto, empty catch, always-true conditions) hides defects.",
+      "why it matters": "Reviewers may miss missing error paths. Educational MISRA-oriented guidance discourages unstructured jumps.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "goto error; empty catch {}; if (true) { ... }",
+      "recommended practice": "Prefer structured control flow. Handle errors explicitly. Avoid dead branches and swallowed exceptions.",
+      "severity guidance": "Medium for swallowed errors; Low for style-only complexity unless safety-related."
+    }
+  },
+  {
+    "id": "SEC-010",
+    "title": "Input Size Assumptions",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-010 Input Size Assumptions. Code should not assume a fixed maximum size for external data. Truncation or overflow occurs when real-world payloads exceed assumed sizes. Copying a network payload into a 64-byte stack buffer without checking length Enforce documented maximums. Reject oversized input. Size buffers from validated lengths, not from trust. High when size is attacker-controlled; Medium when limits are undocumented. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-010",
+      "title": "Input Size Assumptions",
+      "description": "Code should not assume a fixed maximum size for external data.",
+      "why it matters": "Truncation or overflow occurs when real-world payloads exceed assumed sizes.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "Copying a network payload into a 64-byte stack buffer without checking length",
+      "recommended practice": "Enforce documented maximums. Reject oversized input. Size buffers from validated lengths, not from trust.",
+      "severity guidance": "High when size is attacker-controlled; Medium when limits are undocumented."
+    }
+  },
+  {
+    "id": "SEC-011",
+    "title": "Error Handling",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-011 Error Handling. Failed calls, I/O errors, and invalid states should be detected and handled. Ignoring return values can leave systems in unsafe or partially initialized states. Ignoring malloc NULL; ignoring fread return; empty catch Check return codes. Define fail-safe behavior. Do not continue as if success occurred. Medium to High depending on the failed operation. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-011",
+      "title": "Error Handling",
+      "description": "Failed calls, I/O errors, and invalid states should be detected and handled.",
+      "why it matters": "Ignoring return values can leave systems in unsafe or partially initialized states.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "Ignoring malloc NULL; ignoring fread return; empty catch",
+      "recommended practice": "Check return codes. Define fail-safe behavior. Do not continue as if success occurred.",
+      "severity guidance": "Medium to High depending on the failed operation."
+    }
+  },
+  {
+    "id": "SEC-012",
+    "title": "Hardcoded Secrets",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-012 Hardcoded Secrets. Passwords, API keys, tokens, and certificates must not be embedded in source code. Source repositories, logs, and binaries can leak credentials used against production systems. api_key = \"sk-live-...\" or password = \"admin123\" Use secrets management or environment variables outside source. Rotate if secrets were committed. Never print secrets. High for production-looking credentials; Medium for obvious placeholders still stored in code. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-012",
+      "title": "Hardcoded Secrets",
+      "description": "Passwords, API keys, tokens, and certificates must not be embedded in source code.",
+      "why it matters": "Source repositories, logs, and binaries can leak credentials used against production systems.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "api_key = \"sk-live-...\" or password = \"admin123\"",
+      "recommended practice": "Use secrets management or environment variables outside source. Rotate if secrets were committed. Never print secrets.",
+      "severity guidance": "High for production-looking credentials; Medium for obvious placeholders still stored in code."
+    }
+  },
+  {
+    "id": "SEC-013",
+    "title": "Unsafe Command Execution",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-013 Unsafe Command Execution. Building OS commands from untrusted data can allow command injection. Attackers may execute unintended programs on the host or build environment. os.system(user); subprocess(..., shell=True); Runtime.exec(userInput) Avoid shells. Use fixed executables with argument arrays. Validate and allow-list arguments. High when user or external data reaches a shell or exec API. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-013",
+      "title": "Unsafe Command Execution",
+      "description": "Building OS commands from untrusted data can allow command injection.",
+      "why it matters": "Attackers may execute unintended programs on the host or build environment.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "os.system(user); subprocess(..., shell=True); Runtime.exec(userInput)",
+      "recommended practice": "Avoid shells. Use fixed executables with argument arrays. Validate and allow-list arguments.",
+      "severity guidance": "High when user or external data reaches a shell or exec API."
+    }
+  },
+  {
+    "id": "SEC-014",
+    "title": "Unsafe Deserialization",
+    "languages": "Java, Python, JavaScript, TypeScript, C++",
+    "text": "SEC-014 Unsafe Deserialization. Deserializing untrusted data can instantiate unexpected objects or execute logic. Pickle, YAML load, Java ObjectInputStream, and similar APIs can lead to remote code execution or integrity loss. pickle.loads(data); new ObjectInputStream(in).readObject(); yaml.load(untrusted) Prefer safe formats (JSON with schema). Use safe loaders. Authenticate and validate payloads. High for untrusted streams; Medium when source is unclear. Java, Python, JavaScript, TypeScript, C++",
+    "fields": {
+      "id": "SEC-014",
+      "title": "Unsafe Deserialization",
+      "description": "Deserializing untrusted data can instantiate unexpected objects or execute logic.",
+      "why it matters": "Pickle, YAML load, Java ObjectInputStream, and similar APIs can lead to remote code execution or integrity loss.",
+      "languages": "Java, Python, JavaScript, TypeScript, C++",
+      "example": "pickle.loads(data); new ObjectInputStream(in).readObject(); yaml.load(untrusted)",
+      "recommended practice": "Prefer safe formats (JSON with schema). Use safe loaders. Authenticate and validate payloads.",
+      "severity guidance": "High for untrusted streams; Medium when source is unclear."
+    }
+  },
+  {
+    "id": "SEC-015",
+    "title": "Injection Risks",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-015 Injection Risks. Untrusted data concatenated into SQL, HTML, logs, or interpreters can change meaning. Injection can alter queries, execute scripts in browsers, or poison logs. \"SELECT * FROM t WHERE id=\" + user; element.innerHTML = user; eval(user) Parameterized queries. Context-appropriate encoding. Avoid eval and innerHTML with untrusted data. High for SQL/command/HTML injection indicators. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-015",
+      "title": "Injection Risks",
+      "description": "Untrusted data concatenated into SQL, HTML, logs, or interpreters can change meaning.",
+      "why it matters": "Injection can alter queries, execute scripts in browsers, or poison logs.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "\"SELECT * FROM t WHERE id=\" + user; element.innerHTML = user; eval(user)",
+      "recommended practice": "Parameterized queries. Context-appropriate encoding. Avoid eval and innerHTML with untrusted data.",
+      "severity guidance": "High for SQL/command/HTML injection indicators."
+    }
+  },
+  {
+    "id": "SEC-016",
+    "title": "Authentication / Authorization Checks",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-016 Authentication / Authorization Checks. Privileged operations should verify identity and permissions. Missing checks can expose diagnostic, configuration, or safety interfaces. Admin API handler with no auth check Deny by default. Check authorization server-side. Do not rely only on hidden URLs. High when privileged actions appear unchecked; Medium when checks are incomplete. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-016",
+      "title": "Authentication / Authorization Checks",
+      "description": "Privileged operations should verify identity and permissions.",
+      "why it matters": "Missing checks can expose diagnostic, configuration, or safety interfaces.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "Admin API handler with no auth check",
+      "recommended practice": "Deny by default. Check authorization server-side. Do not rely only on hidden URLs.",
+      "severity guidance": "High when privileged actions appear unchecked; Medium when checks are incomplete."
+    }
+  },
+  {
+    "id": "SEC-017",
+    "title": "Sensitive Data Handling",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-017 Sensitive Data Handling. Secrets, PII, keys, and diagnostic dumps should be minimized, protected, and not logged. Logs and crash dumps are frequently copied outside the original trust boundary. logging.info(\"password=%s\", password) Redact secrets. Encrypt sensitive stores. Limit retention. Avoid writing secrets to traces. High when secrets are logged or stored in plaintext; Medium for other sensitive fields. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-017",
+      "title": "Sensitive Data Handling",
+      "description": "Secrets, PII, keys, and diagnostic dumps should be minimized, protected, and not logged.",
+      "why it matters": "Logs and crash dumps are frequently copied outside the original trust boundary.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "logging.info(\"password=%s\", password)",
+      "recommended practice": "Redact secrets. Encrypt sensitive stores. Limit retention. Avoid writing secrets to traces.",
+      "severity guidance": "High when secrets are logged or stored in plaintext; Medium for other sensitive fields."
+    }
+  },
+  {
+    "id": "SEC-018",
+    "title": "Exception Handling",
+    "languages": "Java, Python, JavaScript, TypeScript, C++",
+    "text": "SEC-018 Exception Handling. Exceptions and errors should not be ignored or overly broad. Empty catch blocks hide faults. Catching Exception/BaseException can swallow safety-relevant failures. except: pass; catch (Exception e) {} Catch specific exceptions. Log safely. Recover or fail closed according to policy. Medium typically; High if safety or security errors are swallowed. Java, Python, JavaScript, TypeScript, C++",
+    "fields": {
+      "id": "SEC-018",
+      "title": "Exception Handling",
+      "description": "Exceptions and errors should not be ignored or overly broad.",
+      "why it matters": "Empty catch blocks hide faults. Catching Exception/BaseException can swallow safety-relevant failures.",
+      "languages": "Java, Python, JavaScript, TypeScript, C++",
+      "example": "except: pass; catch (Exception e) {}",
+      "recommended practice": "Catch specific exceptions. Log safely. Recover or fail closed according to policy.",
+      "severity guidance": "Medium typically; High if safety or security errors are swallowed."
+    }
+  },
+  {
+    "id": "SEC-019",
+    "title": "Logging and Information Exposure",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-019 Logging and Information Exposure. Logs should not include secrets, full payloads, or internal paths that aid attackers. Verbose logs can leak credentials, tokens, and architecture details. console.log(request.headers.authorization) Log identifiers, not secrets. Apply log levels. Review diagnostic builds separately. Medium to High depending on data sensitivity. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-019",
+      "title": "Logging and Information Exposure",
+      "description": "Logs should not include secrets, full payloads, or internal paths that aid attackers.",
+      "why it matters": "Verbose logs can leak credentials, tokens, and architecture details.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "console.log(request.headers.authorization)",
+      "recommended practice": "Log identifiers, not secrets. Apply log levels. Review diagnostic builds separately.",
+      "severity guidance": "Medium to High depending on data sensitivity."
+    }
+  },
+  {
+    "id": "SEC-020",
+    "title": "Dependency / API Security",
+    "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+    "text": "SEC-020 Dependency / API Security. Third-party APIs and dynamic code loading can introduce trust and supply-chain risk. Unpinned dependencies, insecure TLS usage, or dynamic eval of remote scripts expand the attack surface. fetch(\"http://...\") without TLS; eval of remote content; disabling certificate checks Pin approved versions. Use TLS. Avoid dynamic code from the network. Review new APIs. Medium to High depending on trust of the dependency or endpoint. C, C++, Java, Python, JavaScript, TypeScript",
+    "fields": {
+      "id": "SEC-020",
+      "title": "Dependency / API Security",
+      "description": "Third-party APIs and dynamic code loading can introduce trust and supply-chain risk.",
+      "why it matters": "Unpinned dependencies, insecure TLS usage, or dynamic eval of remote scripts expand the attack surface.",
+      "languages": "C, C++, Java, Python, JavaScript, TypeScript",
+      "example": "fetch(\"http://...\") without TLS; eval of remote content; disabling certificate checks",
+      "recommended practice": "Pin approved versions. Use TLS. Avoid dynamic code from the network. Review new APIs.",
+      "severity guidance": "Medium to High depending on trust of the dependency or endpoint."
+    }
+  },
+  {
+    "id": "MISRA-EDU-001",
+    "title": "Educational MISRA-oriented guidance \u2014 language subset and undefined behavior",
+    "languages": "C, C++",
+    "text": "MISRA-EDU-001 Educational MISRA-oriented guidance \u2014 language subset and undefined behavior. Educational MISRA-oriented guidance encourages a safer C/C++ subset, avoiding undefined behavior, implicit conversions, and unbounded operations. This project does not perform official MISRA compliance checking. Automotive and embedded teams often use MISRA as a quality framework. Educational reminders help reviewers, but certification requires qualified processes and tools. Implicit mixed signed/unsigned arithmetic; unbounded strcpy; use of dynamic features where a simpler subset is required Follow the organization's approved coding standard. Use certified analyzers for compliance evidence. Treat this assistant as educational support only. Informational to Medium unless paired with a concrete unsafe pattern. C, C++",
+    "fields": {
+      "id": "MISRA-EDU-001",
+      "title": "Educational MISRA-oriented guidance \u2014 language subset and undefined behavior",
+      "description": "Educational MISRA-oriented guidance encourages a safer C/C++ subset, avoiding undefined behavior, implicit conversions, and unbounded operations. This project does not perform official MISRA compliance checking.",
+      "why it matters": "Automotive and embedded teams often use MISRA as a quality framework. Educational reminders help reviewers, but certification requires qualified processes and tools.",
+      "languages": "C, C++",
+      "example": "Implicit mixed signed/unsigned arithmetic; unbounded strcpy; use of dynamic features where a simpler subset is required",
+      "recommended practice": "Follow the organization's approved coding standard. Use certified analyzers for compliance evidence. Treat this assistant as educational support only.",
+      "severity guidance": "Informational to Medium unless paired with a concrete unsafe pattern."
+    }
+  },
+  {
+    "id": "MISRA-EDU-002",
+    "title": "Educational MISRA-oriented guidance \u2014 mandatory error checking",
+    "languages": "C, C++",
+    "text": "MISRA-EDU-002 Educational MISRA-oriented guidance \u2014 mandatory error checking. Educational MISRA-oriented guidance emphasizes checking return values, avoiding silent failures, and keeping control flow structured. Unchecked failures in ECU software can leave actuators or diagnostics in an undefined state. Ignoring the result of a communication or memory allocation call Handle every relevant error path. Prefer explicit status codes. Document fail-safe behavior. Medium to High on safety-relevant paths. C, C++",
+    "fields": {
+      "id": "MISRA-EDU-002",
+      "title": "Educational MISRA-oriented guidance \u2014 mandatory error checking",
+      "description": "Educational MISRA-oriented guidance emphasizes checking return values, avoiding silent failures, and keeping control flow structured.",
+      "why it matters": "Unchecked failures in ECU software can leave actuators or diagnostics in an undefined state.",
+      "languages": "C, C++",
+      "example": "Ignoring the result of a communication or memory allocation call",
+      "recommended practice": "Handle every relevant error path. Prefer explicit status codes. Document fail-safe behavior.",
+      "severity guidance": "Medium to High on safety-relevant paths."
+    }
+  }
+]

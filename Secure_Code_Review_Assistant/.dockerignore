@@ -1,0 +1,15 @@
+.git
+.gitignore
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+.streamlit/
+.cache/
+*.egg-info/
+.pytest_cache/
+README.md
+Dockerfile
+docker-compose.yml
+PCCOE_StudentName_PRN_CSx_AIML/

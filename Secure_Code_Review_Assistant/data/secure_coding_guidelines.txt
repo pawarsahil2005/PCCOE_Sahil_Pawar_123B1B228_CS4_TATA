@@ -1,0 +1,251 @@
+SECURE CODING GUIDELINES (EDUCATIONAL)
+======================================
+
+This knowledge base is for educational secure-coding review assistance.
+It does not implement official MISRA compliance checking and is not a
+certified static-analysis or security tool. Use wording such as
+"Educational MISRA-oriented guidance" rather than "MISRA compliant".
+
+All findings derived from these rules require human review.
+
+[RULE]
+ID: SEC-001
+TITLE: Array Bounds
+DESCRIPTION: Accessing arrays or buffers without checking the index or length can read or write outside allocated storage.
+WHY IT MATTERS: Out-of-bounds access can cause crashes, data corruption, or memory-safety issues in C/C++ and unexpected exceptions in managed languages.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: buf[index] used without confirming 0 <= index < length
+RECOMMENDED PRACTICE: Validate indexes against the actual allocated or logical length before access. Prefer safer APIs and bounded copies.
+SEVERITY GUIDANCE: High when bounds are missing on attacker-influenced indexes; Medium when bounds are unclear.
+[END RULE]
+
+[RULE]
+ID: SEC-002
+TITLE: Pointer / Null Validation
+DESCRIPTION: Pointers, references, and nullable objects should be validated before dereference or method calls.
+WHY IT MATTERS: Null or invalid pointer use can crash embedded software, cause undefined behavior, or throw NullPointerException / TypeError.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: ptr->field without checking ptr != NULL; obj.method() without null checks
+RECOMMENDED PRACTICE: Check pointers/objects before use. Initialize pointers. Document ownership. In Java/Python, handle None/null explicitly.
+SEVERITY GUIDANCE: High for unchecked dereference of possibly null pointers; Medium for nullable objects with unclear lifetime.
+[END RULE]
+
+[RULE]
+ID: SEC-003
+TITLE: Variable Initialization
+DESCRIPTION: Variables, buffers, and pointers should be initialized before they are read.
+WHY IT MATTERS: Uninitialized memory can leak leftover data, produce non-deterministic behavior, or fail safety-related checks.
+LANGUAGES: C, C++, Java
+EXAMPLE: int x; used in a condition before assignment
+RECOMMENDED PRACTICE: Initialize at declaration. Zero buffers. Avoid reading locals before assignment. Educational MISRA-oriented guidance recommends definite assignment before use.
+SEVERITY GUIDANCE: High in C/C++ safety-critical paths; Medium otherwise.
+[END RULE]
+
+[RULE]
+ID: SEC-004
+TITLE: Integer Overflow and Range
+DESCRIPTION: Arithmetic on integers can wrap, overflow, or produce invalid indexes and sizes.
+WHY IT MATTERS: Overflow can bypass size checks, allocate too little memory, or produce incorrect control decisions in ECU software.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: len + offset used as an allocation size without overflow checks
+RECOMMENDED PRACTICE: Check ranges before arithmetic. Use wider types or saturating/checked operations where available. Validate against documented min/max.
+SEVERITY GUIDANCE: High when overflow can affect buffers or safety decisions; Medium for general arithmetic.
+[END RULE]
+
+[RULE]
+ID: SEC-005
+TITLE: Unsafe Buffer Operations
+DESCRIPTION: Unbounded string and memory copy functions can overflow destination buffers.
+WHY IT MATTERS: Classic buffer overflows remain a common reliability and security issue in C/C++.
+LANGUAGES: C, C++
+EXAMPLE: strcpy, strcat, sprintf, gets, scanf("%s")
+RECOMMENDED PRACTICE: Use bounded APIs (strncpy/strlcpy/snprintf/memcpy_s where approved). Always pass destination size. Avoid gets().
+SEVERITY GUIDANCE: High for unbounded copies of untrusted or unbounded input.
+[END RULE]
+
+[RULE]
+ID: SEC-006
+TITLE: Resource Management
+DESCRIPTION: Files, sockets, memory, mutexes, and other resources must be acquired and released on all paths.
+WHY IT MATTERS: Leaks can exhaust ECU resources. Double-free and use-after-free cause undefined behavior.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: malloc without matching free; open() without close; new without delete
+RECOMMENDED PRACTICE: Pair acquire/release. Use RAII, try-with-resources, or context managers. Check allocation results.
+SEVERITY GUIDANCE: Medium to High depending on resource criticality and error paths.
+[END RULE]
+
+[RULE]
+ID: SEC-007
+TITLE: Input Validation
+DESCRIPTION: External input (network, sensors, user data, files, APIs) must be validated for type, length, range, and encoding.
+WHY IT MATTERS: Unvalidated input can drive injection, overflow, logic errors, and unsafe control flow.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: Using request data directly as a filename, SQL fragment, command, or array index
+RECOMMENDED PRACTICE: Validate at trust boundaries. Use allow-lists. Reject unexpected values. Do not rely only on client-side checks.
+SEVERITY GUIDANCE: High when input influences commands, queries, paths, or memory sizes.
+[END RULE]
+
+[RULE]
+ID: SEC-008
+TITLE: Global State
+DESCRIPTION: Excessive mutable global or static state makes behavior harder to reason about and review.
+WHY IT MATTERS: Hidden coupling can cause race conditions, unexpected side effects, and reuse defects across modules.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: Many non-const globals modified from multiple functions
+RECOMMENDED PRACTICE: Limit globals. Prefer explicit parameters and encapsulated modules. Protect shared state if concurrency exists.
+SEVERITY GUIDANCE: Low to Medium; raise severity if globals store secrets or safety-critical values.
+[END RULE]
+
+[RULE]
+ID: SEC-009
+TITLE: Control Flow
+DESCRIPTION: Complex, unreachable, or dangerous control flow (goto, empty catch, always-true conditions) hides defects.
+WHY IT MATTERS: Reviewers may miss missing error paths. Educational MISRA-oriented guidance discourages unstructured jumps.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: goto error; empty catch {}; if (true) { ... }
+RECOMMENDED PRACTICE: Prefer structured control flow. Handle errors explicitly. Avoid dead branches and swallowed exceptions.
+SEVERITY GUIDANCE: Medium for swallowed errors; Low for style-only complexity unless safety-related.
+[END RULE]
+
+[RULE]
+ID: SEC-010
+TITLE: Input Size Assumptions
+DESCRIPTION: Code should not assume a fixed maximum size for external data.
+WHY IT MATTERS: Truncation or overflow occurs when real-world payloads exceed assumed sizes.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: Copying a network payload into a 64-byte stack buffer without checking length
+RECOMMENDED PRACTICE: Enforce documented maximums. Reject oversized input. Size buffers from validated lengths, not from trust.
+SEVERITY GUIDANCE: High when size is attacker-controlled; Medium when limits are undocumented.
+[END RULE]
+
+[RULE]
+ID: SEC-011
+TITLE: Error Handling
+DESCRIPTION: Failed calls, I/O errors, and invalid states should be detected and handled.
+WHY IT MATTERS: Ignoring return values can leave systems in unsafe or partially initialized states.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: Ignoring malloc NULL; ignoring fread return; empty catch
+RECOMMENDED PRACTICE: Check return codes. Define fail-safe behavior. Do not continue as if success occurred.
+SEVERITY GUIDANCE: Medium to High depending on the failed operation.
+[END RULE]
+
+[RULE]
+ID: SEC-012
+TITLE: Hardcoded Secrets
+DESCRIPTION: Passwords, API keys, tokens, and certificates must not be embedded in source code.
+WHY IT MATTERS: Source repositories, logs, and binaries can leak credentials used against production systems.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: api_key = "sk-live-..." or password = "admin123"
+RECOMMENDED PRACTICE: Use secrets management or environment variables outside source. Rotate if secrets were committed. Never print secrets.
+SEVERITY GUIDANCE: High for production-looking credentials; Medium for obvious placeholders still stored in code.
+[END RULE]
+
+[RULE]
+ID: SEC-013
+TITLE: Unsafe Command Execution
+DESCRIPTION: Building OS commands from untrusted data can allow command injection.
+WHY IT MATTERS: Attackers may execute unintended programs on the host or build environment.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: os.system(user); subprocess(..., shell=True); Runtime.exec(userInput)
+RECOMMENDED PRACTICE: Avoid shells. Use fixed executables with argument arrays. Validate and allow-list arguments.
+SEVERITY GUIDANCE: High when user or external data reaches a shell or exec API.
+[END RULE]
+
+[RULE]
+ID: SEC-014
+TITLE: Unsafe Deserialization
+DESCRIPTION: Deserializing untrusted data can instantiate unexpected objects or execute logic.
+WHY IT MATTERS: Pickle, YAML load, Java ObjectInputStream, and similar APIs can lead to remote code execution or integrity loss.
+LANGUAGES: Java, Python, JavaScript, TypeScript, C++
+EXAMPLE: pickle.loads(data); new ObjectInputStream(in).readObject(); yaml.load(untrusted)
+RECOMMENDED PRACTICE: Prefer safe formats (JSON with schema). Use safe loaders. Authenticate and validate payloads.
+SEVERITY GUIDANCE: High for untrusted streams; Medium when source is unclear.
+[END RULE]
+
+[RULE]
+ID: SEC-015
+TITLE: Injection Risks
+DESCRIPTION: Untrusted data concatenated into SQL, HTML, logs, or interpreters can change meaning.
+WHY IT MATTERS: Injection can alter queries, execute scripts in browsers, or poison logs.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: "SELECT * FROM t WHERE id=" + user; element.innerHTML = user; eval(user)
+RECOMMENDED PRACTICE: Parameterized queries. Context-appropriate encoding. Avoid eval and innerHTML with untrusted data.
+SEVERITY GUIDANCE: High for SQL/command/HTML injection indicators.
+[END RULE]
+
+[RULE]
+ID: SEC-016
+TITLE: Authentication / Authorization Checks
+DESCRIPTION: Privileged operations should verify identity and permissions.
+WHY IT MATTERS: Missing checks can expose diagnostic, configuration, or safety interfaces.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: Admin API handler with no auth check
+RECOMMENDED PRACTICE: Deny by default. Check authorization server-side. Do not rely only on hidden URLs.
+SEVERITY GUIDANCE: High when privileged actions appear unchecked; Medium when checks are incomplete.
+[END RULE]
+
+[RULE]
+ID: SEC-017
+TITLE: Sensitive Data Handling
+DESCRIPTION: Secrets, PII, keys, and diagnostic dumps should be minimized, protected, and not logged.
+WHY IT MATTERS: Logs and crash dumps are frequently copied outside the original trust boundary.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: logging.info("password=%s", password)
+RECOMMENDED PRACTICE: Redact secrets. Encrypt sensitive stores. Limit retention. Avoid writing secrets to traces.
+SEVERITY GUIDANCE: High when secrets are logged or stored in plaintext; Medium for other sensitive fields.
+[END RULE]
+
+[RULE]
+ID: SEC-018
+TITLE: Exception Handling
+DESCRIPTION: Exceptions and errors should not be ignored or overly broad.
+WHY IT MATTERS: Empty catch blocks hide faults. Catching Exception/BaseException can swallow safety-relevant failures.
+LANGUAGES: Java, Python, JavaScript, TypeScript, C++
+EXAMPLE: except: pass; catch (Exception e) {}
+RECOMMENDED PRACTICE: Catch specific exceptions. Log safely. Recover or fail closed according to policy.
+SEVERITY GUIDANCE: Medium typically; High if safety or security errors are swallowed.
+[END RULE]
+
+[RULE]
+ID: SEC-019
+TITLE: Logging and Information Exposure
+DESCRIPTION: Logs should not include secrets, full payloads, or internal paths that aid attackers.
+WHY IT MATTERS: Verbose logs can leak credentials, tokens, and architecture details.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: console.log(request.headers.authorization)
+RECOMMENDED PRACTICE: Log identifiers, not secrets. Apply log levels. Review diagnostic builds separately.
+SEVERITY GUIDANCE: Medium to High depending on data sensitivity.
+[END RULE]
+
+[RULE]
+ID: SEC-020
+TITLE: Dependency / API Security
+DESCRIPTION: Third-party APIs and dynamic code loading can introduce trust and supply-chain risk.
+WHY IT MATTERS: Unpinned dependencies, insecure TLS usage, or dynamic eval of remote scripts expand the attack surface.
+LANGUAGES: C, C++, Java, Python, JavaScript, TypeScript
+EXAMPLE: fetch("http://...") without TLS; eval of remote content; disabling certificate checks
+RECOMMENDED PRACTICE: Pin approved versions. Use TLS. Avoid dynamic code from the network. Review new APIs.
+SEVERITY GUIDANCE: Medium to High depending on trust of the dependency or endpoint.
+[END RULE]
+
+[RULE]
+ID: MISRA-EDU-001
+TITLE: Educational MISRA-oriented guidance — language subset and undefined behavior
+DESCRIPTION: Educational MISRA-oriented guidance encourages a safer C/C++ subset, avoiding undefined behavior, implicit conversions, and unbounded operations. This project does not perform official MISRA compliance checking.
+WHY IT MATTERS: Automotive and embedded teams often use MISRA as a quality framework. Educational reminders help reviewers, but certification requires qualified processes and tools.
+LANGUAGES: C, C++
+EXAMPLE: Implicit mixed signed/unsigned arithmetic; unbounded strcpy; use of dynamic features where a simpler subset is required
+RECOMMENDED PRACTICE: Follow the organization's approved coding standard. Use certified analyzers for compliance evidence. Treat this assistant as educational support only.
+SEVERITY GUIDANCE: Informational to Medium unless paired with a concrete unsafe pattern.
+[END RULE]
+
+[RULE]
+ID: MISRA-EDU-002
+TITLE: Educational MISRA-oriented guidance — mandatory error checking
+DESCRIPTION: Educational MISRA-oriented guidance emphasizes checking return values, avoiding silent failures, and keeping control flow structured.
+WHY IT MATTERS: Unchecked failures in ECU software can leave actuators or diagnostics in an undefined state.
+LANGUAGES: C, C++
+EXAMPLE: Ignoring the result of a communication or memory allocation call
+RECOMMENDED PRACTICE: Handle every relevant error path. Prefer explicit status codes. Document fail-safe behavior.
+SEVERITY GUIDANCE: Medium to High on safety-relevant paths.
+[END RULE]
