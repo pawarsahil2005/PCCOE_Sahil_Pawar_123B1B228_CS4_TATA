@@ -19,7 +19,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # Pre-download the RAG embedding model so first analysis does not wait on Hugging Face.
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
 
-COPY analyzer.py app.py gemini_client.py ingest.py ./
+COPY analyzer.py app.py database.py gemini_client.py ingest.py ./
 COPY data ./data
 COPY index ./index
 COPY prompts ./prompts
